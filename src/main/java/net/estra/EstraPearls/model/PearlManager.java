@@ -1,8 +1,14 @@
 package net.estra.EstraPearls.model;
 
+import net.estra.EstraPearls.PearlPlugin;
+import net.estra.EstraPearls.model.holder.BlockHolder;
+import net.estra.EstraPearls.model.holder.ItemHolder;
+import net.estra.EstraPearls.model.holder.PearlHolder;
 import net.estra.EstraPearls.model.holder.PlayerHolder;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.Container;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -122,5 +128,78 @@ public class PearlManager {
             }
         }
         return false;
+    }
+
+    /**
+     * Verifies that all pearls exist and haven't been yeeted.
+     */
+    public void verifyPearls() {
+        for(Pearl pearl : pearls) {
+            PearlHolder holder = pearl.getHolder();
+            //stupid bug mess bullshit fuck you
+            if(holder == null) {
+                freePlayer(pearl.getPlayer());
+                return;
+            }
+            if(holder instanceof ItemHolder) {
+                ItemHolder itemHolder = (ItemHolder) holder;
+                //Entity is dead, removed, or deleted.
+                if (itemHolder.getItem().isDead() || !itemHolder.getItem().isValid()) {
+                    freePlayer(pearl.getPlayer());
+                    return;
+                }
+                return;
+                //pearl still exists sooooooo, whatever!
+            } else if(holder instanceof PlayerHolder) {
+                PlayerHolder playerHolder = (PlayerHolder) holder;
+                Player player = playerHolder.getPlayer();
+                //Assuming the player is any of the above, clearly the pearl is in Debug Limbo
+                if(!player.isOnline() || player.isBanned() || !player.isValid() || player.isDead()) {
+                    freePlayer(pearl.getPlayer());
+                    return;
+                }
+                Inventory inventory = player.getInventory();
+                boolean found = false; //false by default, if we find we set to true.
+                for(Map.Entry<Integer, ? extends ItemStack> entry : inventory.all(Material.ENDER_PEARL).entrySet()) {
+                    ItemStack item = entry.getValue();
+                    Pearl entryPearl = getPearlByItemStack(item);
+                    if(entryPearl == null) { continue; }
+                    //only mark true if we find the pearl in the container.
+                    if(entryPearl.equals(pearl)) { found = true; }
+                }
+                if(!found) {
+                    //Couldn't find the pearl so we free.
+                    freePlayer(pearl.getPlayer());
+                    return;
+                }
+                return;
+                //Player is good to go so, WHATEVER.
+            } else if(holder instanceof BlockHolder) {
+                BlockHolder blockHolder = (BlockHolder) holder;
+                Block block = blockHolder.getBlock();
+                if(!(block instanceof Container)) {
+                    //how the fuck did you accomplish this
+                    freePlayer(pearl.getPlayer());
+                    return;
+                }
+                Inventory inventory = ((Container) block).getInventory();
+                boolean found = false; //false by default, if we find we set to true.
+                for(Map.Entry<Integer, ? extends ItemStack> entry : inventory.all(Material.ENDER_PEARL).entrySet()) {
+                    ItemStack item = entry.getValue();
+                    Pearl entryPearl = getPearlByItemStack(item);
+                    if(entryPearl == null) { continue; }
+                    //only mark true if we find the pearl in the container.
+                    if(entryPearl.equals(pearl)) { found = true; }
+                }
+                if(!found) {
+                    //Couldn't find the pearl so we free.
+                    freePlayer(pearl.getPlayer());
+                    return;
+                }
+                return;
+            }
+            PearlPlugin.logger.warning("Container bugged for pearl? " + pearl.getPlayer() + " freeing.");
+            freePlayer(pearl.getPlayer());
+        }
     }
 }

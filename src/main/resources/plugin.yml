@@ -7,3 +7,6 @@ commands:
   free:
     usage: "/free"
     description: "Frees the pearl you hold in your hand."
+  pearl:
+    usage: "/pearl <player>"
+    description: "Pearls the player you specify."

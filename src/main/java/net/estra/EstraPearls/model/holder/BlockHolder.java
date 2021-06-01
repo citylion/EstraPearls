@@ -5,7 +5,13 @@ import org.bukkit.block.Block;
 
 public class BlockHolder extends PearlHolder{
 
-    private Block block;
+    private final Block block;
+
+    public BlockHolder(Block block) {
+        this.block = block;
+    }
+
+    public Block getBlock() { return block; }
 
     @Override
     public Location getLocation() {

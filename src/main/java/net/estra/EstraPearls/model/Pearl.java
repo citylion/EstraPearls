@@ -65,6 +65,10 @@ public class Pearl {
 
     public PearlHolder getHolder() { return holder; }
 
+    public void updateHolder(PearlHolder holder) {
+        this.holder = holder;
+    }
+
     public ItemStack getPearlAsItem() {
         ItemStack pearl = new ItemStack(Material.ENDER_PEARL);
         ItemMeta meta = pearl.getItemMeta();

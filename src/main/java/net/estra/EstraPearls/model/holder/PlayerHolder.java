@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 
 public class PlayerHolder extends PearlHolder{
 
-    private Player player;
+    private final Player player;
 
     public PlayerHolder(Player player) {
         this.player = player;
