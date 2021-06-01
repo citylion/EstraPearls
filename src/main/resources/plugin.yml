@@ -1,0 +1,9 @@
+name: EstraPearls
+main: net.estra.EstraPearls.PearlPlugin
+version: 1.0
+commands:
+  debug:
+    usage: "/debug"
+  free:
+    usage: "/free"
+    description: "Frees the pearl you hold in your hand."
