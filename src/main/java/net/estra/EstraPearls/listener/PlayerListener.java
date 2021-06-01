@@ -81,6 +81,8 @@ public class PlayerListener implements Listener {
             PearlPlugin.pearlManager.verifyPearl(pearl);
             //Check if pearl has been freed after verifying pearl.
             if(pearl.isFreed()) {
+                //delay so sends when player is actually logged
+                Bukkit.getScheduler().runTaskLater(PearlPlugin.instance, () -> event.getPlayer().sendMessage(ChatColor.GREEN + "You have been freed!"), 40);
                 return;
             }
             event.disallow(PlayerLoginEvent.Result.KICK_OTHER, ChatColor.AQUA + "You are pearled! \n"

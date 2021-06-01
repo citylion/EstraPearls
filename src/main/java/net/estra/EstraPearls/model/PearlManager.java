@@ -25,6 +25,31 @@ public class PearlManager {
 
 
     public void freePlayer(UUID uuid) {
+        for(Pearl pearl : pearls) {
+            if(pearl.getPlayer() == uuid) {
+                PearlHolder holder = pearl.getHolder();
+                if(holder instanceof BlockHolder) {
+                    //Its not an item, nor is it a player so we must delete from blockInv
+                    BlockHolder blockHolder = (BlockHolder) holder;
+                    Block block = blockHolder.getBlock();
+                    if(!(block.getState() instanceof Container)) {
+                        //how the fuck did you accomplish this
+                        PearlPlugin.logger.info("Pearl was somehow in a block that isn't a container?");
+                        freePlayer(pearl.getPlayer());
+                        pearl.setFreed(true);
+                        return;
+                    }
+                    Inventory inventory = ((Container) block.getState()).getInventory();
+                    for(Map.Entry<Integer, ? extends ItemStack> entry : inventory.all(Material.ENDER_PEARL).entrySet()) {
+                        ItemStack item = entry.getValue();
+                        Pearl entryPearl = getPearlByItemStack(item);
+                        if(entryPearl == null) { continue; }
+                        //removes the pearl if we find it in the container.
+                        if(entryPearl.equals(pearl)) { inventory.remove(item); }
+                    }
+                }
+            }
+        }
         pearls.removeIf(pearl -> pearl.getPlayer().equals(uuid));
     }
 
@@ -148,6 +173,13 @@ public class PearlManager {
     public void verifyPearls() {
         PearlPlugin.logger.info("Running pearl verification task.");
         for(Pearl pearl : pearls) {
+            if(pearl.getFreeDate().getTime() < System.currentTimeMillis()) {
+                //Pearl is older than its expiration date and should be freed.
+                PearlPlugin.logger.info("Pearl: " + pearl.getPlayer() + " freeing since past age.");
+                freePlayer(pearl.getPlayer());
+                return;
+            }
+
             PearlPlugin.logger.info("Starting verification of pearl UUID: " + pearl.getPlayer().toString());
             PearlHolder holder = pearl.getHolder();
             //stupid bug mess bullshit fuck you
@@ -193,12 +225,14 @@ public class PearlManager {
             } else if(holder instanceof BlockHolder) {
                 BlockHolder blockHolder = (BlockHolder) holder;
                 Block block = blockHolder.getBlock();
-                if(!(block instanceof Container)) {
+                if(!(block.getState() instanceof Container)) {
                     //how the fuck did you accomplish this
+                    PearlPlugin.logger.info("Pearl was somehow in a block that isn't a container?");
                     freePlayer(pearl.getPlayer());
+                    pearl.setFreed(true);
                     return;
                 }
-                Inventory inventory = ((Container) block).getInventory();
+                Inventory inventory = ((Container) block.getState()).getInventory();
                 boolean found = false; //false by default, if we find we set to true.
                 for(Map.Entry<Integer, ? extends ItemStack> entry : inventory.all(Material.ENDER_PEARL).entrySet()) {
                     ItemStack item = entry.getValue();
@@ -225,6 +259,12 @@ public class PearlManager {
      */
     public void verifyPearl(Pearl pearl) {
         PearlPlugin.logger.info("Starting individual verification of pearl UUID: " + pearl.getPlayer().toString());
+        if(pearl.getFreeDate().getTime() < System.currentTimeMillis()) {
+            //Pearl is older than its expiration date and should be freed.
+            PearlPlugin.logger.info("Pearl: " + pearl.getPlayer() + " freeing since past age.");
+            freePlayer(pearl.getPlayer());
+            return;
+        }
         PearlHolder holder = pearl.getHolder();
         //stupid bug mess bullshit fuck you
         if(holder == null) {
@@ -263,23 +303,25 @@ public class PearlManager {
             }
             if(!found) {
                 //Couldn't find the pearl so we free.
+                PearlPlugin.logger.info("Couldn't find pearl in players inventory.");
                 freePlayer(pearl.getPlayer());
                 pearl.setFreed(true);
                 return;
             }
-            PearlPlugin.logger.info("Pearl Verified.");
+            PearlPlugin.logger.info("Pearl Verified. Is present in playerInv");
             return;
             //Player is good to go so, WHATEVER.
         } else if(holder instanceof BlockHolder) {
             BlockHolder blockHolder = (BlockHolder) holder;
             Block block = blockHolder.getBlock();
-            if(!(block instanceof Container)) {
+            if(!(block.getState() instanceof Container)) {
                 //how the fuck did you accomplish this
+                PearlPlugin.logger.info("Pearl was somehow in a block that isn't a container?");
                 freePlayer(pearl.getPlayer());
                 pearl.setFreed(true);
                 return;
             }
-            Inventory inventory = ((Container) block).getInventory();
+            Inventory inventory = ((Container) block.getState()).getInventory();
             boolean found = false; //false by default, if we find we set to true.
             for(Map.Entry<Integer, ? extends ItemStack> entry : inventory.all(Material.ENDER_PEARL).entrySet()) {
                 ItemStack item = entry.getValue();
@@ -290,6 +332,7 @@ public class PearlManager {
             }
             if(!found) {
                 //Couldn't find the pearl so we free.
+                PearlPlugin.logger.info("Couldn't find pearl in block inventory.");
                 freePlayer(pearl.getPlayer());
                 pearl.setFreed(true);
                 return;

@@ -4,8 +4,8 @@ version: 1.0
 commands:
   debug:
     usage: "/debug"
-  free:
-    usage: "/free"
+  epfree:
+    usage: "/epfree"
     description: "Frees the pearl you hold in your hand."
   pearl:
     usage: "/pearl <player>"

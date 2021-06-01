@@ -4,6 +4,12 @@ version: 1.0
 commands:
   debug:
     usage: "/debug"
-  free:
-    usage: "/free"
+  epfree:
+    usage: "/epfree"
     description: "Frees the pearl you hold in your hand."
+  pearl:
+    usage: "/pearl <player>"
+    description: "Pearls the player you specify."
+  eplocate:
+    usage: "/eplocate <player>"
+    description: "Gives the location the pearled player is held at."

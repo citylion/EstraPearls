@@ -64,7 +64,11 @@ public class Pearl {
     public String getDateFreedAsString() {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(freeDate);
-        return calendar.get(2) + "/" + calendar.get(5) + "/" + calendar.get(1);
+        return Math.addExact(calendar.get(Calendar.MONTH), 1) + "/" + calendar.get(Calendar.DATE) + "/" + calendar.get(Calendar.YEAR);
+    }
+
+    public Date getFreeDate() {
+        return freeDate;
     }
 
     public PearlHolder getHolder() { return holder; }

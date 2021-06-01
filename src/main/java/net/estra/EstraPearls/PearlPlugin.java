@@ -41,7 +41,7 @@ public class PearlPlugin extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         this.getServer().getPluginManager().registerEvents(new PearlTrackListener(), this);
         this.getCommand("debug").setExecutor(new Debug());
-        this.getCommand("free").setExecutor(new FreeCommand());
+        this.getCommand("epfree").setExecutor(new FreeCommand());
         this.getCommand("pearl").setExecutor(new PearlCommand());
         this.getCommand("eplocate").setExecutor(new EpLocateCommand());
 
