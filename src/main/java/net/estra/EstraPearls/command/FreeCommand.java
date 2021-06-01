@@ -2,13 +2,13 @@ package net.estra.EstraPearls.command;
 
 import net.estra.EstraPearls.PearlPlugin;
 import net.estra.EstraPearls.model.Pearl;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 public class FreeCommand implements CommandExecutor {
     @Override
@@ -28,8 +28,8 @@ public class FreeCommand implements CommandExecutor {
         }
         Pearl pearl = PearlPlugin.pearlManager.getPearlByItemStack(player.getItemInHand());
         PearlPlugin.pearlManager.freePlayer(pearl.getPlayer());
-        player.sendMessage(ChatColor.GREEN + "You have freed " + Bukkit.getOfflinePlayer(pearl.getPlayer()).getName());
-        player.getItemInHand().setType(Material.AIR); //Set the hand to Material.AIR to delete the pearl.
+        player.sendMessage(ChatColor.GREEN + "You have freed " + pearl.getPearlName());
+        player.setItemInHand(new ItemStack(Material.AIR));
         return true;
     }
 }

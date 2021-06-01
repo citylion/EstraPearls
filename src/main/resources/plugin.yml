@@ -10,3 +10,6 @@ commands:
   pearl:
     usage: "/pearl <player>"
     description: "Pearls the player you specify."
+  eplocate:
+    usage: "/eplocate <player>"
+    description: "Gives the location the pearled player is held at."

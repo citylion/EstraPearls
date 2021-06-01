@@ -65,7 +65,7 @@ public class PlayerListener implements Listener {
             if (firstPearl > 9)
                 continue; //Pearl isn't in the hotbar, so skip.
 
-            if(PearlPlugin.pearlManager.pearlPlayer(player, damager)) {
+            if(PearlPlugin.pearlManager.pearlPlayer(player.getUniqueId(), damager)) {
                 PearlPlugin.logger.info(player.getName() + " was pearled by " + damager.getName());
                 player.sendMessage(ChatColor.DARK_GRAY + "[EP] You have been imprisoned by " + ChatColor.YELLOW + damager.getName());
                 damager.sendMessage(ChatColor.DARK_GRAY + "[EP] You imprisoned " + ChatColor.YELLOW + player.getName());
@@ -78,7 +78,8 @@ public class PlayerListener implements Listener {
     public void onPlayerLogin(PlayerLoginEvent event) {
         if(PearlPlugin.pearlManager.hasPearl(event.getPlayer().getUniqueId())) {
             Pearl pearl = PearlPlugin.pearlManager.getPearlByID(event.getPlayer().getUniqueId());
-            //Pearl is freed player can login now.
+            PearlPlugin.pearlManager.verifyPearl(pearl);
+            //Check if pearl has been freed after verifying pearl.
             if(pearl.isFreed()) {
                 return;
             }

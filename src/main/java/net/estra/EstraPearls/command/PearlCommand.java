@@ -34,7 +34,7 @@ public class PearlCommand implements CommandExecutor {
                 return true;
             }
 
-            PearlPlugin.pearlManager.pearlPlayer(pearl.getPlayer(), player);
+            PearlPlugin.pearlManager.pearlPlayer(pearl.getUniqueId(), player);
             player.sendMessage(ChatColor.GREEN + "Successfully pearled " + pearl.getName());
 
             //Kick the player if they're online.

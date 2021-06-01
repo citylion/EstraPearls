@@ -20,6 +20,9 @@ public class Pearl {
     //Pearls current location
     private PearlHolder holder;
 
+    //Held here since i dont trust bukkit to handle memory management
+    private String pearlName;
+
     //This shouldn't ever need to be changed since the pearl only exists for a small amount of time.
     private String killerName;
 
@@ -37,6 +40,7 @@ public class Pearl {
     public Pearl(PearlHolder holder, UUID player, String killer) {
         this.holder = holder;
         this.player = player;
+        this.pearlName = Bukkit.getOfflinePlayer(player).getName();
         this.killerName = killer;
         this.pearlDate = new Date();
         //Set the time that should be freed.
@@ -69,15 +73,23 @@ public class Pearl {
         this.holder = holder;
     }
 
+    public void setFreed(boolean freed) {
+        this.freed = freed;
+    }
+
+    public String getPearlName() {
+        return pearlName;
+    }
+
     public ItemStack getPearlAsItem() {
         ItemStack pearl = new ItemStack(Material.ENDER_PEARL);
         ItemMeta meta = pearl.getItemMeta();
-        meta.setDisplayName(ChatColor.DARK_RED + Bukkit.getOfflinePlayer(player).getName());
+        meta.setDisplayName(ChatColor.DARK_RED + pearlName);
         List<String> lore = new ArrayList<>();
         lore.add(ChatColor.GOLD + "Killer: " + ChatColor.AQUA + killerName);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(freeDate);
-        lore.add(ChatColor.GOLD + "Freed at: " + ChatColor.AQUA + calendar.get(2) + "/" + calendar.get(5) + "/" + calendar.get(1));
+        lore.add(ChatColor.GOLD + "Freed at: " + ChatColor.AQUA + Math.addExact(calendar.get(Calendar.MONTH), 1) + "/" + calendar.get(Calendar.DATE) + "/" + calendar.get(Calendar.YEAR));
         lore.add(ChatColor.DARK_GRAY + player.toString());
         meta.setLore(lore);
         pearl.setItemMeta(meta);

@@ -1,6 +1,7 @@
 package net.estra.EstraPearls;
 
 import net.estra.EstraPearls.command.Debug;
+import net.estra.EstraPearls.command.EpLocateCommand;
 import net.estra.EstraPearls.command.FreeCommand;
 import net.estra.EstraPearls.command.PearlCommand;
 import net.estra.EstraPearls.listener.DmgListener;
@@ -42,6 +43,7 @@ public class PearlPlugin extends JavaPlugin {
         this.getCommand("debug").setExecutor(new Debug());
         this.getCommand("free").setExecutor(new FreeCommand());
         this.getCommand("pearl").setExecutor(new PearlCommand());
+        this.getCommand("eplocate").setExecutor(new EpLocateCommand());
 
         //Verify our pearls every 10 minutes so we dont fucking die.
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
