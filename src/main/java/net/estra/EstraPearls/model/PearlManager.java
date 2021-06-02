@@ -27,6 +27,8 @@ public class PearlManager {
     public void freePlayer(UUID uuid) {
         for(Pearl pearl : pearls) {
             if(pearl.getPlayer() == uuid) {
+                //Removes pearl from DB.
+                PearlPlugin.pearlDAO.removePearl(pearl);
                 PearlHolder holder = pearl.getHolder();
                 if(holder instanceof BlockHolder) {
                     //Its not an item, nor is it a player so we must delete from blockInv
@@ -35,9 +37,8 @@ public class PearlManager {
                     if(!(block.getState() instanceof Container)) {
                         //how the fuck did you accomplish this
                         PearlPlugin.logger.info("Pearl was somehow in a block that isn't a container?");
-                        freePlayer(pearl.getPlayer());
                         pearl.setFreed(true);
-                        return;
+                        continue;
                     }
                     Inventory inventory = ((Container) block.getState()).getInventory();
                     for(Map.Entry<Integer, ? extends ItemStack> entry : inventory.all(Material.ENDER_PEARL).entrySet()) {
@@ -165,6 +166,28 @@ public class PearlManager {
             }
         }
         return false;
+    }
+
+    /**
+     * Loads pearls from storage on startup
+     */
+    public void loadPearls() {
+        PearlPlugin.logger.info("Loading pearls for startup.");
+
+        pearls = PearlPlugin.pearlDAO.loadPearls();
+    }
+
+    /**
+     * Saves all pearls, should do this on shutdown.
+     */
+    public void savePearls() {
+        PearlPlugin.logger.info("Saving pearls on shutdown.");
+        for(Pearl pearl : pearls) {
+            //Pearl holder should only be an instance of a blockholder, otherwise shit bugs out.
+            if(!(pearl.getHolder() instanceof BlockHolder)) { return; }
+            PearlPlugin.logger.info("Saving pearl " + pearl.getPlayer());
+            PearlPlugin.pearlDAO.addPearl(pearl);
+        }
     }
 
     /**

@@ -85,9 +85,9 @@ public class PlayerListener implements Listener {
                 Bukkit.getScheduler().runTaskLater(PearlPlugin.instance, () -> event.getPlayer().sendMessage(ChatColor.GREEN + "You have been freed!"), 40);
                 return;
             }
-            event.disallow(PlayerLoginEvent.Result.KICK_OTHER, ChatColor.AQUA + "You are pearled! \n"
-                    + ChatColor.GOLD + "Your pearl is located at " + pearl.getLocationAsString() + "\n"
-            + ChatColor.GREEN + "You will be freed on " + pearl.getDateFreedAsString());
+            event.disallow(PlayerLoginEvent.Result.KICK_OTHER, ChatColor.DARK_RED + "You are pearled! \n"
+                    + ChatColor.DARK_GRAY + "Your pearl is located at " + ChatColor.AQUA + pearl.getLocationAsString() + "\n"
+            + ChatColor.DARK_GRAY + "You will be freed on " + ChatColor.GOLD + pearl.getDateFreedAsString());
         }
     }
 
@@ -98,9 +98,9 @@ public class PlayerListener implements Listener {
             if(pearl.isFreed()) {
                 return;
             }
-            event.getPlayer().kickPlayer(ChatColor.AQUA + "You are pearled! \n"
-                    + ChatColor.GOLD + "Your pearl is located at " + pearl.getLocationAsString() + "\n"
-                    + ChatColor.GREEN + "You will be freed on " + pearl.getDateFreedAsString());
+            event.getPlayer().kickPlayer(ChatColor.DARK_RED + "You are pearled! \n"
+                    + ChatColor.DARK_GRAY + "Your pearl is located at " + ChatColor.AQUA + pearl.getLocationAsString() + "\n"
+                    + ChatColor.DARK_GRAY + "You will be freed on " + ChatColor.GOLD + pearl.getDateFreedAsString());
         }
     }
 }

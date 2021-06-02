@@ -1,9 +1,11 @@
 package net.estra.EstraPearls.model;
 
 import net.estra.EstraPearls.PearlPlugin;
+import net.estra.EstraPearls.model.holder.BlockHolder;
 import net.estra.EstraPearls.model.holder.PearlHolder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -37,6 +39,12 @@ public class Pearl {
 
     private boolean freed;
 
+    /**
+     * Constructor for building a pearl while ingame.
+     * @param holder
+     * @param player
+     * @param killer
+     */
     public Pearl(PearlHolder holder, UUID player, String killer) {
         this.holder = holder;
         this.player = player;
@@ -48,6 +56,30 @@ public class Pearl {
         this.freeDate = new Date();
         freeDate.setTime(freeTime);
     }
+
+    /**
+     * Constructor for building/loading from DB.
+     * @param player - player UUID
+     * @param playerName - player's actual name
+     * @param killerName - killers name
+     * @param date - systemTimeInMilis for datePearled
+     * @param dateFreed - systemTimeInMilis for dateFreed
+     * @param x - x
+     * @param y - y
+     * @param z - z
+     */
+    public Pearl(String player, String playerName, String killerName, long date, long dateFreed, int x, int y, int z, String world) {
+        this.player = UUID.fromString(player);
+        this.pearlName = playerName;
+        this.killerName = killerName;
+        this.pearlDate = new Date();
+        pearlDate.setTime(date);
+        this.freeDate = new Date();
+        freeDate.setTime(dateFreed);
+        Location location = new Location(Bukkit.getWorld(world), x, y, z);
+        this.holder = new BlockHolder(location.getBlock());
+    }
+
 
     public UUID getPlayer() {
         return player;
@@ -66,6 +98,10 @@ public class Pearl {
         calendar.setTime(freeDate);
         return Math.addExact(calendar.get(Calendar.MONTH), 1) + "/" + calendar.get(Calendar.DATE) + "/" + calendar.get(Calendar.YEAR);
     }
+
+    public String getKillerName() { return killerName; }
+
+    public Date getPearlDate() { return pearlDate; }
 
     public Date getFreeDate() {
         return freeDate;

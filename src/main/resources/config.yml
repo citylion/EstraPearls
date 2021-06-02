@@ -1,2 +1,10 @@
 #Below should be the amount of DAYS
 pearlTime: 7
+
+#sql info, must be filled out
+sql:
+  host: ""
+  username: ""
+  password: ""
+  dbname: ""
+  port: 3306

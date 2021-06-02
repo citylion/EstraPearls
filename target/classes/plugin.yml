@@ -1,9 +1,13 @@
 name: EstraPearls
 main: net.estra.EstraPearls.PearlPlugin
 version: 1.0
+depend: [CivModCore]
 commands:
   debug:
     usage: "/debug"
+  forcefree:
+    usage: "/forcefree <player>"
+    description: "Admin only command, forcibly frees a pearl."
   epfree:
     usage: "/epfree"
     description: "Frees the pearl you hold in your hand."

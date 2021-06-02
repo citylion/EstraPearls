@@ -1,9 +1,6 @@
 package net.estra.EstraPearls;
 
-import net.estra.EstraPearls.command.Debug;
-import net.estra.EstraPearls.command.EpLocateCommand;
-import net.estra.EstraPearls.command.FreeCommand;
-import net.estra.EstraPearls.command.PearlCommand;
+import net.estra.EstraPearls.command.*;
 import net.estra.EstraPearls.listener.DmgListener;
 import net.estra.EstraPearls.listener.PlayerListener;
 import net.estra.EstraPearls.listener.PearlTrackListener;
@@ -11,16 +8,19 @@ import net.estra.EstraPearls.model.DamageLogManager;
 import net.estra.EstraPearls.model.PearlManager;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.Configuration;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
+import vg.civcraft.mc.civmodcore.ACivMod;
 
 import java.util.logging.Logger;
 
-public class PearlPlugin extends JavaPlugin {
+public class PearlPlugin extends ACivMod {
 
     public static PearlPlugin instance;
     public static Configuration config;
     public static PearlManager pearlManager;
     public static DamageLogManager damageLogManager;
+    public static PearlDAO pearlDAO;
 
     public static Logger logger;
 
@@ -32,10 +32,16 @@ public class PearlPlugin extends JavaPlugin {
         instance = this;
         logger = this.getLogger();
         config = this.getConfig();
+        saveDefaultConfig();
+        reloadConfig();
+
+        parseSqlConfig();
         pearlManager = new PearlManager();
         damageLogManager = new DamageLogManager();
 
         pearlTime = config.getInt("pearlTime");
+
+        pearlManager.loadPearls();
 
         this.getServer().getPluginManager().registerEvents(new DmgListener(), this);
         this.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
@@ -44,20 +50,35 @@ public class PearlPlugin extends JavaPlugin {
         this.getCommand("epfree").setExecutor(new FreeCommand());
         this.getCommand("pearl").setExecutor(new PearlCommand());
         this.getCommand("eplocate").setExecutor(new EpLocateCommand());
+        this.getCommand("forcefree").setExecutor(new ForceFree());
+
+        pearlManager.verifyPearls(); //Immediately verify pearls.
 
         //Verify our pearls every 10 minutes so we dont fucking die.
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
-            @Override
-            public void run() {
-                pearlManager.verifyPearls();
-            }
-        }, 12000, 12000);
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> pearlManager.verifyPearls(), 12000, 12000);
+    }
+
+    @Override
+    protected String getPluginName() {
+        return "EstraPearls";
     }
 
     @Override
     public void onDisable() {
-
+        //For now we'll just save pearls on shutdown. This is easiest with the current configuration.
+        pearlManager.savePearls();
     }
+
+    public void parseSqlConfig() {
+        ConfigurationSection sql = config.getConfigurationSection("sql");
+        String host = sql.getString("host");
+        String user = sql.getString("username");
+        String pass = sql.getString("password");
+        String dbName = sql.getString("dbname");
+        int port = sql.getInt("port");
+        pearlDAO = new PearlDAO(this, user, pass, host, port, dbName, 5, 1000L, 600000L, 7200000L);
+    }
+
 
     public DamageLogManager getDamageLogManager() { return damageLogManager;}
 
