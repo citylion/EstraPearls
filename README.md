@@ -5,7 +5,7 @@ Inspired by PrisonPearl &amp; ExilePearl. However with a bit of an HCF Styled tw
  * MySQL Server
  * Paper/Spigot 1.12.2
 
-##Configuration
+## Configuration
 Fill out proper MySQL server credential values in the default config.
 You also need to specify the amount of days a player is deathbanned for.
 
