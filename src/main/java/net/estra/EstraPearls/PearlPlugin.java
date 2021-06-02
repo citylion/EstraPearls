@@ -4,6 +4,7 @@ import net.estra.EstraPearls.command.*;
 import net.estra.EstraPearls.listener.DmgListener;
 import net.estra.EstraPearls.listener.PlayerListener;
 import net.estra.EstraPearls.listener.PearlTrackListener;
+import net.estra.EstraPearls.model.CombatTagManager;
 import net.estra.EstraPearls.model.DamageLogManager;
 import net.estra.EstraPearls.model.PearlManager;
 import org.bukkit.Bukkit;
@@ -20,6 +21,7 @@ public class PearlPlugin extends ACivMod {
     public static Configuration config;
     public static PearlManager pearlManager;
     public static DamageLogManager damageLogManager;
+    public CombatTagManager combatTagManager;
     public static PearlDAO pearlDAO;
 
     public static Logger logger;
@@ -38,6 +40,7 @@ public class PearlPlugin extends ACivMod {
         parseSqlConfig();
         pearlManager = new PearlManager();
         damageLogManager = new DamageLogManager();
+        combatTagManager = new CombatTagManager();
 
         pearlTime = config.getInt("pearlTime");
 
@@ -46,7 +49,8 @@ public class PearlPlugin extends ACivMod {
         this.getServer().getPluginManager().registerEvents(new DmgListener(), this);
         this.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         this.getServer().getPluginManager().registerEvents(new PearlTrackListener(), this);
-        this.getCommand("debug").setExecutor(new Debug());
+        this.getCommand("ep").setExecutor(new EpLocateCommand());
+        //this.getCommand("debug").setExecutor(new Debug());
         this.getCommand("epfree").setExecutor(new FreeCommand());
         this.getCommand("pearl").setExecutor(new PearlCommand());
         this.getCommand("eplocate").setExecutor(new EpLocateCommand());
@@ -68,6 +72,8 @@ public class PearlPlugin extends ACivMod {
         //For now we'll just save pearls on shutdown. This is easiest with the current configuration.
         pearlManager.savePearls();
     }
+
+    public CombatTagManager getCombatTagManager() { return combatTagManager; }
 
     public void parseSqlConfig() {
         ConfigurationSection sql = config.getConfigurationSection("sql");

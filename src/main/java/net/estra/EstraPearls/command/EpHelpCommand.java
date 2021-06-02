@@ -16,8 +16,10 @@ public class EpHelpCommand implements CommandExecutor {
         }
         //I don't care if there are any arguments this should send no matter what.
         Player player = (Player) commandSender;
-        player.sendMessage(ChatColor.AQUA + "");
-
+        player.sendMessage(ChatColor.DARK_RED + "EstraPearls\n" +
+                ChatColor.GOLD + "/epfree " + ChatColor.DARK_GRAY + "- frees a pearl in your hand\n" +
+                ChatColor.GOLD + "/eplocate " + ChatColor.DARK_GRAY + "- locates a pearl of your choice\n" +
+                ChatColor.GOLD + "/ep " + ChatColor.DARK_GRAY + "- Displays this help menu");
         return true;
     }
 }

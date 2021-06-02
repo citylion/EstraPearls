@@ -3,6 +3,7 @@ package net.estra.EstraPearls.listener;
 import net.estra.EstraPearls.PearlPlugin;
 import net.estra.EstraPearls.model.Pearl;
 import net.estra.EstraPearls.model.holder.PlayerHolder;
+import net.minelink.ctplus.compat.api.NpcIdentity;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -27,13 +28,23 @@ public class PlayerListener implements Listener {
         }
         PearlPlugin.logger.info("player damage and shit");
 
-        final UUID playerUid;
-        playerUid = ((Player) event.getEntity()).getUniqueId();
-        Player player = (Player) event.getEntity();
-        if(PearlPlugin.pearlManager.hasPearl(playerUid)) {
-            Pearl pearl = PearlPlugin.pearlManager.getPearlByID(playerUid);
+        Player player = (Player)event.getEntity();
+        UUID uuid = player.getUniqueId();
+        String playerName = player.getName();
+        if (PearlPlugin.instance.getCombatTagManager().isCombatTagPlusNPC(player)){
+            NpcIdentity iden = PearlPlugin.instance.getCombatTagManager().getCombatTagPlusNPCIdentity(player);
+            uuid = iden.getId();
+            playerName = iden.getName();
+            PearlPlugin.logger.info("NPC Player: " + playerName + ", ID: " + uuid);
+        } else if (PearlPlugin.instance.getCombatTagManager().isEnabled() && !PearlPlugin.instance.getCombatTagManager().isCombatTagged(player)) {
+            PearlPlugin.logger.info("Player: " + playerName + " is out of combatTag, immune from pearling.");
+            return;
+        }
+
+        if(PearlPlugin.pearlManager.hasPearl(uuid)) {
+            Pearl pearl = PearlPlugin.pearlManager.getPearlByID(uuid);
             //No idea how'd they would login.
-            Bukkit.getPlayer(playerUid).kickPlayer(ChatColor.AQUA + "You are pearled! \n"
+            Bukkit.getPlayer(uuid).kickPlayer(ChatColor.AQUA + "You are pearled! \n"
                     + ChatColor.GOLD + "Your pearl is located at " + pearl.getLocationAsString() + "\n"
                     + ChatColor.GREEN + "You will be freed on " + pearl.getDateFreedAsString());
 
@@ -43,9 +54,9 @@ public class PlayerListener implements Listener {
             return;
         }
         for(Player damager : PearlPlugin.damageLogManager.getDamagers(player)) {
-            if (PearlPlugin.pearlManager.hasPearl(playerUid)) {
+            if (PearlPlugin.pearlManager.hasPearl(uuid)) {
                 //Player is already pearled, meaning the for statement was likely completed. Will ALWAYS be a PlayerContainer after.
-                Pearl pearl = PearlPlugin.pearlManager.getPearlByID(playerUid);
+                Pearl pearl = PearlPlugin.pearlManager.getPearlByID(uuid);
                 if (pearl.getHolder() instanceof PlayerHolder) {
                     Player kill = ((PlayerHolder) pearl.getHolder()).getPlayer();
                     damager.sendMessage(ChatColor.DARK_GRAY + "[EP] " + ChatColor.AQUA + player.getName() + ChatColor.DARK_GRAY + " was pearled by " + ChatColor.AQUA + kill.getName());
@@ -65,7 +76,7 @@ public class PlayerListener implements Listener {
             if (firstPearl > 9)
                 continue; //Pearl isn't in the hotbar, so skip.
 
-            if(PearlPlugin.pearlManager.pearlPlayer(player.getUniqueId(), damager)) {
+            if(PearlPlugin.pearlManager.pearlPlayer(uuid, damager)) {
                 PearlPlugin.logger.info(player.getName() + " was pearled by " + damager.getName());
                 player.sendMessage(ChatColor.DARK_GRAY + "[EP] You have been imprisoned by " + ChatColor.YELLOW + damager.getName());
                 damager.sendMessage(ChatColor.DARK_GRAY + "[EP] You imprisoned " + ChatColor.YELLOW + player.getName());
