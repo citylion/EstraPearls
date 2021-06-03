@@ -7,6 +7,7 @@ If you kill a player with a pearl in your hotbar, the player will be banned for 
 ## Requirements
  * MySQL Server
  * Paper/Spigot 1.12.2
+ * CivModCore 1.6.2 (or later)
 
 ## Configuration
 Fill out proper MySQL server credential values in the default config.
