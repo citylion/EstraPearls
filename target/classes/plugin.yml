@@ -8,6 +8,9 @@ commands:
   forcefree:
     usage: "/forcefree <player>"
     description: "Admin only command, forcibly frees a pearl."
+  ep:
+    usage: "/ep"
+    description: "Displays a friendly help menu."
   epfree:
     usage: "/epfree"
     description: "Frees the pearl you hold in your hand."

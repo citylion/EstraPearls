@@ -2,9 +2,10 @@ package net.estra.EstraPearls.model;
 
 import net.estra.EstraPearls.PearlPlugin;
 import net.minelink.ctplus.CombatTagPlus;
+import net.minelink.ctplus.NpcManager;
 import net.minelink.ctplus.TagManager;
-import net.minelink.ctplus.compat.api.NpcIdentity;
-import net.minelink.ctplus.compat.api.NpcPlayerHelper;
+import net.minelink.ctplus.compat.base.NpcIdentity;
+import net.minelink.ctplus.compat.base.NpcPlayerHelper;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 
@@ -15,6 +16,7 @@ import java.util.logging.Logger;
  */
 public class CombatTagManager {
     private NpcPlayerHelper combatTagPlusApi;
+
     private boolean combatTagPlusEnabled = false;
     private TagManager combatTagPlusTagManager;
 

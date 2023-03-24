@@ -1,6 +1,7 @@
 package net.estra.EstraPearls;
 
 import net.estra.EstraPearls.command.*;
+import net.estra.EstraPearls.config.ConfigManager;
 import net.estra.EstraPearls.listener.DmgListener;
 import net.estra.EstraPearls.listener.PlayerListener;
 import net.estra.EstraPearls.listener.PearlTrackListener;
@@ -10,8 +11,9 @@ import net.estra.EstraPearls.model.PearlManager;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.plugin.java.JavaPlugin;
 import vg.civcraft.mc.civmodcore.ACivMod;
+import vg.civcraft.mc.civmodcore.dao.ConnectionPool;
+import vg.civcraft.mc.civmodcore.dao.DatabaseCredentials;
 
 import java.util.logging.Logger;
 
@@ -37,12 +39,10 @@ public class PearlPlugin extends ACivMod {
         saveDefaultConfig();
         reloadConfig();
 
-        parseSqlConfig();
+        createDAO();
         pearlManager = new PearlManager();
         damageLogManager = new DamageLogManager();
         combatTagManager = new CombatTagManager();
-
-        pearlTime = config.getInt("pearlTime");
 
         pearlManager.loadPearls();
 
@@ -59,13 +59,12 @@ public class PearlPlugin extends ACivMod {
         pearlManager.verifyPearls(); //Immediately verify pearls.
 
         //Verify our pearls every 10 minutes so we dont fucking die.
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> pearlManager.verifyPearls(), 12000, 12000);
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> pearlManager.verifyPearls(), 12000, 100L);
     }
 
-    @Override
-    protected String getPluginName() {
-        return "EstraPearls";
-    }
+    //protected String getPluginName() {
+   //    return "EstraPearls";
+   // }
 
     @Override
     public void onDisable() {
@@ -75,14 +74,8 @@ public class PearlPlugin extends ACivMod {
 
     public CombatTagManager getCombatTagManager() { return combatTagManager; }
 
-    public void parseSqlConfig() {
-        ConfigurationSection sql = config.getConfigurationSection("sql");
-        String host = sql.getString("host");
-        String user = sql.getString("username");
-        String pass = sql.getString("password");
-        String dbName = sql.getString("dbname");
-        int port = sql.getInt("port");
-        pearlDAO = new PearlDAO(this, user, pass, host, port, dbName, 5, 1000L, 600000L, 7200000L);
+    public void createDAO() {
+        pearlDAO = new PearlDAO(this, ConfigManager.getConpolFromConfig());
     }
 
 

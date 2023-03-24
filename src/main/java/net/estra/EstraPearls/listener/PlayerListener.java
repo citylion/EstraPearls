@@ -3,7 +3,7 @@ package net.estra.EstraPearls.listener;
 import net.estra.EstraPearls.PearlPlugin;
 import net.estra.EstraPearls.model.Pearl;
 import net.estra.EstraPearls.model.holder.PlayerHolder;
-import net.minelink.ctplus.compat.api.NpcIdentity;
+import net.minelink.ctplus.compat.base.NpcIdentity;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

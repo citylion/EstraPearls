@@ -4,6 +4,7 @@ import net.estra.EstraPearls.model.Pearl;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import vg.civcraft.mc.civmodcore.ACivMod;
+import vg.civcraft.mc.civmodcore.dao.ConnectionPool;
 import vg.civcraft.mc.civmodcore.dao.ManagedDatasource;
 
 import java.sql.Connection;
@@ -14,8 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PearlDAO extends ManagedDatasource {
-    public PearlDAO(ACivMod plugin, String user, String pass, String host, int port, String database, int poolSize, long connectionTimeout, long idleTimeout, long maxLifetime) {
-        super(plugin, user, pass, host, port, database, poolSize, connectionTimeout, idleTimeout, maxLifetime);
+    public PearlDAO(ACivMod plugin, ConnectionPool conpol) {
+        super(plugin, conpol);
         prepareMigrations();
         updateDatabase();
     }
