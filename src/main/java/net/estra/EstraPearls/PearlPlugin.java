@@ -2,7 +2,6 @@ package net.estra.EstraPearls;
 
 import net.estra.EstraPearls.command.*;
 import net.estra.EstraPearls.config.ConfigManager;
-import net.estra.EstraPearls.listener.DmgListener;
 import net.estra.EstraPearls.listener.PlayerListener;
 import net.estra.EstraPearls.listener.PearlTrackListener;
 import net.estra.EstraPearls.model.CombatTagManager;
@@ -15,9 +14,12 @@ import vg.civcraft.mc.civmodcore.ACivMod;
 import vg.civcraft.mc.civmodcore.dao.ConnectionPool;
 import vg.civcraft.mc.civmodcore.dao.DatabaseCredentials;
 
+import java.util.TimeZone;
 import java.util.logging.Logger;
 
 public class PearlPlugin extends ACivMod {
+
+    public static TimeZone timezone = TimeZone.getTimeZone("America/New_York");//EASTERN DAYLIGHT TIME
 
     public static PearlPlugin instance;
     public static Configuration config;
@@ -46,7 +48,6 @@ public class PearlPlugin extends ACivMod {
 
         pearlManager.loadPearls();
 
-        this.getServer().getPluginManager().registerEvents(new DmgListener(), this);
         this.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         this.getServer().getPluginManager().registerEvents(new PearlTrackListener(), this);
         this.getCommand("ep").setExecutor(new EpLocateCommand());
@@ -82,6 +83,12 @@ public class PearlPlugin extends ACivMod {
     public DamageLogManager getDamageLogManager() { return damageLogManager;}
 
     public long getPearlTimeInMilis() {
-        return (long) pearlTime * 86400000;
+        return (long) pearlTime * 86400000;//I guess thats the amount of ms in a day huh
     }
+
+    public long getPearlTimeInMilis(long timePearled, int health) {
+        return (long) pearlTime * 86400000;//I guess thats the amount of ms in a day huh
+    }
+
+
 }
